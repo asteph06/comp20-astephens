@@ -1,0 +1,39 @@
+
+
+.homer{
+	height: 305px;
+	width:  305px;
+}
+	
+@media 
+	    (min-width:1200px){
+	.homer{
+		background:url('homer.jpg') 0px 0px;
+	}
+}
+	
+@media 
+	    (max-width:1200px)
+	and (min-width:800px ){
+	.homer{
+		background:url('homer.jpg') 315px 0px;
+	}
+}
+
+@media 
+	    (max-width:800px )
+	and (min-width:400px){
+	.homer{
+		background:url('homer.jpg') 0px 315px;
+	}
+}
+
+@media 
+	    (max-width:400px){
+	.homer{
+		background:url('homer.jpg') 315px 315px;
+	}
+}
+
+
+
