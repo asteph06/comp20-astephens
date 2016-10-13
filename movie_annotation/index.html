@@ -15,8 +15,9 @@
 
 <script>
 	// Mozilla Website example used as reference
-	var v = document.getElementByTagName("video")[0];
-	v.play();
+	var vid = document.getElementsByTagName("video")[0];
+	vid.addEventListener("timeupdate", function() { vid.pause(); }, true);
+	var quotes = document.getElementByID( "movie_quotes" );
 </script>
 
 </body>
