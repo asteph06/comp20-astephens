@@ -1,13 +1,15 @@
-
 #title{
 	text-align: center;
 }
 
-#movie_quotes{
-	align-content: left;
+body {
+	text-align: center;
+	width:400px;
+	padding-right: 15%;
+	padding-left: 15%;
 }
 
-body {
+#movie_quotes{
 	text-align: center;
 }
 
@@ -15,8 +17,8 @@ video {
 	width:320px;
 	height:240px;
 	padding-top: 10px;
-	padding-left: 50px;
-	padding-right: 50px;
+	padding-left: 1px;
+	padding-right: 1px;
 	padding-bottom: 10px;
 }
 

@@ -18,52 +18,51 @@
 	var vid = document.getElementById("classic_video")
 	vid.addEventListener("timeupdate", printCaptions );
 	var cap = document.getElementById( "movie_quotes" );
-	cap.innerHTML = "words";
+	vid.play();
 
 	function printCaptions() {
 		if (vid.currentTime > 24 & vid.currentTime < 26 ) {
 			cap.innerHTML = "Igor: DR. FRANKENSTEIN?!?!?";
-		}else if(vid.currentTime > 31.5 & vid.currentTime < 34){
+		}else if(vid.currentTime > 31 & vid.currentTime < 32.5){
 			cap.innerHTML = "Dr. Frederick Frankenstein: Frokensteen.";
-		}else if(vid.currentTime > 31.5 & vid.currentTime < 34){
+		}else if(vid.currentTime > 34 & vid.currentTime < 37){
 			cap.innerHTML = "Igor: You're putting me on."
-		}else if(vid.currentTime > 35  & vid.currentTime < 37){
+		}else if(vid.currentTime > 37  & vid.currentTime < 39.5){
 			cap.innerHTML = 'Dr. Frederick Frankenstein: No, it pronounced, "Frokensteen".';
-		}else if(vid.currentTime > 37  & vid.currentTime < 40){
+		}else if(vid.currentTime > 39.5  & vid.currentTime < 42){
 			cap.innerHTML = "Igor: Do you also say Froaderick?";
-		}else if(vid.currentTime > 40.5 & vid.currentTime < 42){
+		}else if(vid.currentTime > 42 & vid.currentTime < 44){
 			cap.innerHTML = 'Dr. Frederick Frankenstein: No . . . "Frederick."';
-		}else if(vid.currentTime > 42 & vid.currentTime < 34){
+		}else if(vid.currentTime > 44 & vid.currentTime < 47){
 			cap.innerHTML = "Igor: Well, why isn't it 'Froaderick Frokensteen'?";
-		}else if(vid.currentTime > 31.5 & vid.currentTime < 34){
+		}else if(vid.currentTime > 47 & vid.currentTime < 49){
 			cap.innerHTML = "Dr. Frederick Frankenstein: It isn't, it's "+'"Frederick Frokensteen"';
-		}else if(vid.currentTime > 31.5 & vid.currentTime < 34){
+		}else if(vid.currentTime > 50 & vid.currentTime < 51){
 			cap.innerHTML = "Igor: I see.";
-		}else if(vid.currentTime > 31.5 & vid.currentTime < 34){
+		}else if(vid.currentTime > 52 & vid.currentTime < 53){
 			cap.innerHTML = "Dr. Frederick Frankenstein: You must be Igor. [He pronounces it ee-gor.]";
-		}else if(vid.currentTime > 31.5 & vid.currentTime < 34){
+		}else if(vid.currentTime > 53 & vid.currentTime < 56.3){
 			cap.innerHTML = "Igor: No, it"+"'s pronounced "+'"eye-gor."';
-		}else if(vid.currentTime > 31.5 & vid.currentTime < 34){
+		}else if(vid.currentTime > 57 & vid.currentTime < 59){
 			cap.innerHTML = 'Dr. Frederick Frankenstein: But they told me it was "ee-gor"...';
-		}else if(vid.currentTime > 31.5 & vid.currentTime < 34){
+		}else if(vid.currentTime > 59 & vid.currentTime < 61){
 			cap.innerHTML = "Igor: Well, they were wrong then, weren't they?";
-		}else if(vid.currentTime > 31.5 & vid.currentTime < 34){
+		}else if(vid.currentTime > 61 & vid.currentTime < 64){
 			cap.innerHTML = "Dr. Frederick Frankenstein: Uh, you were sent here by Herr Falkstein, weren't you?";
-		}else if(vid.currentTime > 31.5 & vid.currentTime < 34){
+		}else if(vid.currentTime > 64.5 & vid.currentTime < 68 ){
 			cap.innerHTML = "Igor: Yes. My grandfather used to work for your grandfather.";
-		}else if(vid.currentTime > 31.5 & vid.currentTime < 34){
+		}else if(vid.currentTime > 71  & vid.currentTime < 72){
 			cap.innerHTML = "Dr. Frederick Frankenstein: How nice.";
-		}else if(vid.currentTime > 31.5 & vid.currentTime < 34){
+		}else if(vid.currentTime > 72 & vid.currentTime < 74){
 			cap.innerHTML = "Igor: Of course the rates have gone up.";
-		}else if(vid.currentTime > 31.5 & vid.currentTime < 34){
+		}else if(vid.currentTime > 74 & vid.currentTime < 88 ){
 			cap.innerHTML = "Dr. Frederick Frankenstein: Of course, of course, I'm sure we'll get along splendidly. Oh, I uh, you know I don't mean to embarrass you, but I'm rather a brilliant surgeon. Perhaps I can help you with that hump.";
-		}else if(vid.currentTime > 31.5 & vid.currentTime < 34){
+		}else if(vid.currentTime > 89.5 & vid.currentTime < 91){
 			cap.innerHTML = "Igor: What hump";
 		}else{
 			cap.innerHTML = "";
 		}
 	} 
-
 </script>
 
 </body>
