@@ -6,24 +6,18 @@
     <meta charset="utf-8" />
     <title>mbta</title>
     <link rel="stylesheet" href="style.css" type="text/css" />
-    
-    <script SRC="mbtaScript.js">
-    </script>   
+    <script SRC="mbtaScript.js"></script> 
 
-    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJsTnbUN-w_0jbfg9c9SgM4bfQP2k_asc&callback=initMap"
-    async defer></script> 
-    
+    <!-- GOOGLE MAPS KEY: AIzaSyCJsTnbUN-w_0jbfg9c9SgM4bfQP2k_asc -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCJsTnbUN-w_0jbfg9c9SgM4bfQP2k_asc&callback=initMap"></script> 
     <!--    DOES NOT WORK
-    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=true"></script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?sensor=true"></script> 
     -->
-
 </head>
 
-<body>
-    <h1 id="title">Assignment:2 Closest MBTA Station</h1>
+<body onload="initMap()">
+    <h1 id="title">Assignment:2 Closest MBTA Station</h1> 
     <div id="map"></div>
-
-
 </body>
 
 
