@@ -32,7 +32,8 @@ function initStations()
     debug("end","initStations"); //////////////////////////////// ----- !
 }
 
-function stationData(){ // just made to separate
+function stationData()
+{ // made to separate data from functions
 	return [
 	 {"name":"Alewife","loc":{"lat": 42.395428  ,"lng":-71.142483}},
 	 {"name":"Davis","loc":{"lat": 42.39674   ,"lng":-71.121815}},
@@ -59,20 +60,12 @@ function stationData(){ // just made to separate
 	 ];
 }
 
-/*
-	pathy = [stations[0].loc, stations[15].loc];
-	var path1 = new google.maps.Polyline({
-		path: pathy,
-		geodesic: true,
-    	strokeColor: '#FF0000',
-    	strokeOpacity: 1.0,
-    	strokeWeight: 2
-	})
-	path1.setMap(map);
-*/
-
-function addRedlinePath(stationData){
+function addRedlinePath(stationData)
+{
 	debug("start","addRedlinePath"); //////////////////////////////// ----- !
+	var alewifeToJFK   = [];
+	var jfkToAshmont   = [];
+	var jfkToBraintree = [];
 	var lineProperties = {
 		path: [],
 		geodesic: true,
@@ -80,10 +73,6 @@ function addRedlinePath(stationData){
     	strokeOpacity: 1.0,
     	strokeWeight: 2
 	};
-	var alewifeToJFK   = [];
-	var jfkToAshmont   = [];
-	var jfkToBraintree = [];
-
 	for( var i = 0 ; i < 13 ; i++ ){
 		alewifeToJFK[i] = stationData[i].loc;
 	}
@@ -110,19 +99,4 @@ function addRedlinePath(stationData){
 	path2.setMap(map);
 	path3.setMap(map);
 	debug("end","addRedlinePath"); //////////////////////////////// ----- !
-}
-
-function getIcons(){
- 	var iconBase = 'https://maps.google.com/mapfiles/kml/shapes/';
- 	return{
- 		station : {
- 			icon: iconBase + 'station.png'
- 		},
- 		user : {
- 			icon: iconBase + 'user.png'
- 		},
- 		train : {
- 			icon: iconBase + 'train.png'
- 		}
- 	};
 }
