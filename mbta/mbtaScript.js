@@ -21,7 +21,18 @@ stationData = [
 	 {"name":"Wollaston","loc":{"lat": 42.2665139 ,"lng":-71.0203369}},
 	 {"name":"Quincy Center","loc":{"lat": 42.251809  ,"lng":-71.005409}},
 	 {"name":"Quincy Adams","loc":{"lat": 42.233391  ,"lng":-71.007153}},
-	 {"name":"Braintree","loc":{"lat": 42.2078543 ,"lng":-71.0011385}}]; 
+	 {"name":"Braintree","loc":{"lat": 42.2078543 ,"lng":-71.0011385}}];
+
+stationNameToIndex {};
+for (var i = 0 ; i < Things.length; i+) {
+	var temp = stationData[i].name;
+	stationNameToIndex.temp = i;
+}
+
+for (var i = 0; i < stationData.length; i++) {
+	stationData[i].trains = [];
+}
+
 userLocation = {lat: 0 , lng: 0};
 closestStation = 30;
 minDistance = 0;
@@ -42,8 +53,7 @@ userLineProperties = {
 };
 
 
-function initMap()
-{
+function initMap(){
 	debug("start","initMap"); //////////////////////////////// ----- !
 	var myOptions = {
 		zoom: 12,
@@ -57,10 +67,8 @@ function initMap()
 	debug("end","initMap"); //////////////////////////////// ----- !
 }
 
-function initStationMarkers()
-{
+function initStationMarkers(){
 	debug("start","initStationMarkers"); //////////////////////////////// ----- !
-//	var marker = [];
 	for (var i = 0; i < stationData.length; i++){
 		marker[i] = new google.maps.Marker({
 			position: stationData[i].loc,
@@ -82,8 +90,7 @@ function updateStationMarkers(){
 	}
 }
 
-function addRedlinePath()
-{
+function addRedlinePath(){
 	debug("start","addRedlinePath"); //////////////////////////////// ----- !
 	var alewifeToJFK   = [];
 	var jfkToAshmont   = [];
@@ -116,8 +123,7 @@ function addRedlinePath()
 	debug("end","addRedlinePath"); //////////////////////////////// ----- !
 }
 
-function getUserLocation()
-{
+function getUserLocation(){
 	debug("start","getUserLocation"); //////////////////////////////// ----- !
 	if(navigator.geolocation){
 		navigator.geolocation.getCurrentPosition(function(position){
@@ -145,8 +151,7 @@ function timeUpdate(){
 }
 
 
-function updateClosestStation()
-{
+function updateClosestStation(){
 	debug("start","updateClosestStation"); //////////////////////////////// ----- !
 	var distance = 0;
 	closestStation = 0;
@@ -161,7 +166,6 @@ function updateClosestStation()
 	debug("start","updateClosestStation"); //////////////////////////////// ----- !
 }
 
-
 // in miles
 function calcDist(p1,p2){
 	//debug("start","calcDist"); //////////////////////////////// ----- !
@@ -172,13 +176,82 @@ function calcDist(p1,p2){
 }
 
 
-function showClosestStation()
-{
+function showClosestStation(){
 	debug("start","showClosestStation"); //////////////////////////////// ----- !
 	userLineProperties.path = [ stationData[closestStation].loc , userLocation ];
 	line2User = new google.maps.Polyline(userLineProperties);
 	line2User.setMap(map);
 	debug("end","showClosestStation"); //////////////////////////////// ----- !
+}
+
+function train(arrivalTime,destination){
+	var newTrain = {
+		'time': arrivalTime,
+		'dest': destination;
+	};
+	return newTrain;
+}
+
+function getIncomingTrains(){
+	// piazza post "XML request" used as reference
+	var raw;
+	var data;
+	request = new XMLHttpRequest();
+	request.open("get","https://rocky-taiga-26352.herokuapp.com/redline.json", true);
+	request.onreadystatechange = function()
+	{
+		if(request.readyState == 4){
+			if ( request.status == 200 ) {
+				raw = request.responseTest;
+				data = JSON.parse(raw);
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+			}else{
+				getIncomingTrains();
+			}
+		}
+	}
+}
+
+
+
+
+
+function(){
+	for(var i =  0; i < data.TripList.Trips.length ; i++ ){
+		for (var k = 0 ; k < data.TripList.Trips.length ; k++) {
+			
+		}
+	}
+}
+
+
+
+
+
+
+
+function generateInfoWindowContent(incomingTrainTimes,stationNumber){
+	var contentStr = '<div id="content">' +
+	'<div id="siteNotice">'+
+	'</div>' +
+	'<h1 id="stationName">' + stationData[stationNumber].name + '</h1>';
+	for(var i = 0; i<incomingTrainTimes.length;i++){
+		contentStr
+	}
+	contentStr = contentStr + '</div>';
+}
+
+function orderTrainTimes(){
+	var temp;
+	for(var i=0; i<stationData.length;i++){
+		for(var t=1; t<stationData[i].trains.length;t++){
+			if(stationData[i].trains[t].time<stationData[i].trains[t-1]){
+				temp = stationData[i].trains[t-1];
+				stationData[i].trains[t-1] = stationData[i].trains[t];
+				stationData[i].trains[t] = temp;
+			}
+		}
+	}
 }
 
 /*
@@ -197,7 +270,7 @@ function centerMapOnUser(){
 
 }
 
-function displayTrainInfo(stationNumber){
+function displayTrainInfo(stationNumber){\
 
 }*/
 -->
