@@ -26,7 +26,6 @@ function debug(funcPlace,funcName)
 	console.log( dent + funcPlace + "function: " + funcName);
 	return;
 }
-
 function conLog(conMessage){
 	console.log( dent + conMessage);
 }
