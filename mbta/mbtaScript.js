@@ -55,7 +55,6 @@ userLineProperties = {
 
 
 function initMap(){
-	//debug("start","initMap"); //////////////////////////////// ----- !
 	var myOptions = {
 		zoom: 12,
 		center: {"lat":42.3354945, "lng":-71.0565192},
@@ -67,11 +66,9 @@ function initMap(){
 	initRedlinePath();
 	initUserMarker();
 	getUserLocation();
-	//debug("end","initMap"); //////////////////////////////// ----- !
 }
 
 function initStationMarkers(){
-	//debug("start","initStationMarkers"); //////////////////////////////// ----- !
 	for (var i = 0; i < stationData.length; i++){
 		var newPos = new google.maps.LatLng(stationData[i].loc.lat,stationData[i].loc.lng);
 		marker[i] = new google.maps.Marker({
@@ -80,16 +77,15 @@ function initStationMarkers(){
 			icon: 	 'stationIcon.png'
 		});
 		marker[i].addListener('click',function(){
-			//console.log("calling marker "+this.name);
-			infoWindow.content = '<h3>hello</h3>';
+			infoWindow.content = '<h3>loading</h3>';
 			infoWindow.open(map,this);
 			windowOpenOnStation = this.name;
 			infoWindow.setContent(stationData[stationNameToIndex[this.name]].content);
+			updateUserMarker()
 			getIncomingTrains();
 		});
 		marker[i].setMap(map);
 	}
-    //debug("end","initStationMarkers"); //////////////////////////////// ----- !
 }
 
 function updateStationMarkers(){
@@ -108,20 +104,7 @@ function initInfoWindow(){
 	});
 }
 
-function updateInfoWindow(thisMarker,isUser){
-	if(isUser){
-		infoWindow.setContent("<h1>Loading... </h1>")
-		infoWindow.open(map,userMarker);
-		infoWindow.setContent("<h2>loaded!</h2>");
-	}else{
-		getIncomingTrains();
-		infoWindow.setContent("<h1>Loading... </h1>");
-		infoWindow.open(map,thisMarker);
-	}
-}
-
 function initRedlinePath(){
-	//debug("start","initRedlinePath"); //////////////////////////////// ----- !
 	var alewifeToJFK   = [];
 	var jfkToAshmont   = [];
 	var jfkToBraintree = [];
@@ -150,25 +133,19 @@ function initRedlinePath(){
 	path1.setMap(map);
 	path2.setMap(map);
 	path3.setMap(map);
-	//debug("end","addRedlinePath"); //////////////////////////////// ----- !
 }
 
 function getUserLocation(){
-	//debug("start","getUserLocation"); //////////////////////////////// ----- !
 	if(navigator.geolocation){
 		navigator.geolocation.getCurrentPosition(function(position){
 			userLocation.lat = position.coords.latitude;
 			userLocation.lng = position.coords.longitude;
-			//conLog( "lat: " +userLocation.lat+" lng: "+userLocation.lng);
-			//debug("end","getUserLocation"); //////////////////////////////// ----- !
 			updateUserMarker();
 			return;
 		});
 	}else {
 		alert("geolocation not supported by your browser.");
 	}
-
-	//debug("end","getUserLocation"); //////////////////////////////// ----- !
 }
 
 function initUserMarker(){
@@ -177,8 +154,14 @@ function initUserMarker(){
 		name: 	  "you",
 		Icon: 	  'userIcon.png'
 	});
+	marker[i].addListener('click',function(){
+		infoWindow.content = 'loading...';
+		infoWindow.open(map,this);
+		infoWindow.setContent(stationData[stationNameToIndex[this.name]].content);
+		updateUserMarker()
+		getIncomingTrains();
+	});
 	userMarker.setMap(map);
-	userMarker.addListener('click',updateInfoWindow(userMarker,true))
 }
 
 function updateUserMarker(){
@@ -186,7 +169,6 @@ function updateUserMarker(){
 	updateClosestStation();
 	showClosestStation();
 	updateStationMarkers();
-//	getIncomingTrains();
 }
 
 function updateClosestStation(){
@@ -238,11 +220,10 @@ function getIncomingTrains(){
 			if ( request.status == 200 ) {
 				raw = request.responseText;
 				data = JSON.parse(raw);
-				//console.log(raw);
 				updateStationData(data);
 				debug("end","getIncomingTrains successful"); //////////////////////////////// ----- !
+				infoWindow.setContent(stationData[stationNameToIndex[windowOpenOnStation]].content);
 				return;
-
 			}else{
 				debug("end","getIncomingTrains UNSUCCESSFUL. TRYING AGAIN"); //////////////////////////////// ----- !
 				getIncomingTrains();
@@ -298,11 +279,11 @@ function generateInfoWindowContent(statNum){
 	debug("start","generateInfoWindowContent"); //////////////////////////////// ----- !
 	var station = stationData[statNum];
 	var possDestinations = ["Ashmont","Braintree","Alewife"];
-	var contentStr = '<div id="content">' +
-	'<h1 id="stationName">' + station.name + '</h1>';
+	var contentStr = '<div id="content" style="text-align: center; line-height: 5px;" >' +
+	'<h3 id="stationName">' + station.name + '</h3>';
 	for(var k = 0 ; k<possDestinations.length; k++){
-		contentStr += '<h2 class = "destinationName">' +
-		possDestinations[k] + '</h2>';
+		contentStr += '<h4 class = "destinationName" style="text-align: left;">' +
+		possDestinations[k] + '</h4>';
 		var atLeastOneTrainHeadingToDestination = false;
 		for( var i = 0; i < station.trains.length ; i++ ){
 			if( station.trains[i].dest == possDestinations[k] ){
@@ -346,7 +327,7 @@ function orderTrainTimes(num){
 function s2mins(seconds)
 {
 	debug("start","secondsMinutes"); //////////////////////////////// ----- !
-	var min = seconds/60;
+	var min = Math.floor(seconds/60);
 	var sec = seconds%60;
 	var timey = "" + min + " m " + sec +" s";
 	return timey;
