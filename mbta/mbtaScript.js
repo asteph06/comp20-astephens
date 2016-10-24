@@ -22,21 +22,22 @@ stationData = [
 	 {"name":"Quincy Center","loc":{"lat": 42.251809  ,"lng":-71.005409}},
 	 {"name":"Quincy Adams","loc":{"lat": 42.233391  ,"lng":-71.007153}},
 	 {"name":"Braintree","loc":{"lat": 42.2078543 ,"lng":-71.0011385}}];
-
-stationNameToIndex {};
-for (var i = 0 ; i < Things.length; i+) {
+stationNameToIndex = {};
+for (var i = 0 ; i < stationData.length; i++) {
 	var temp = stationData[i].name;
-	stationNameToIndex.temp = i;
+	stationNameToIndex[temp] = i;
 }
-
 for (var i = 0; i < stationData.length; i++) {
 	stationData[i].trains = [];
+	stationData[i].content = "";
 }
+windowOpenOnStation = "Alewife";
 
 userLocation = {lat: 0 , lng: 0};
 closestStation = 30;
 minDistance = 0;
 marker = [];
+
 redLineProperties = {
 	path: [],
 	geodesic: true,
@@ -54,30 +55,41 @@ userLineProperties = {
 
 
 function initMap(){
-	debug("start","initMap"); //////////////////////////////// ----- !
+	//debug("start","initMap"); //////////////////////////////// ----- !
 	var myOptions = {
 		zoom: 12,
 		center: {"lat":42.3354945, "lng":-71.0565192},
 		mapTypeId: google.maps.MapTypeId.ROADMAP 
 	};
 	map = new google.maps.Map(document.getElementById("map"), myOptions);
+	initInfoWindow();
 	initStationMarkers();
-	addRedlinePath();
+	initRedlinePath();
+	initUserMarker();
 	getUserLocation();
-	debug("end","initMap"); //////////////////////////////// ----- !
+	//debug("end","initMap"); //////////////////////////////// ----- !
 }
 
 function initStationMarkers(){
-	debug("start","initStationMarkers"); //////////////////////////////// ----- !
+	//debug("start","initStationMarkers"); //////////////////////////////// ----- !
 	for (var i = 0; i < stationData.length; i++){
+		var newPos = new google.maps.LatLng(stationData[i].loc.lat,stationData[i].loc.lng);
 		marker[i] = new google.maps.Marker({
-			position: stationData[i].loc,
+			position: newPos,
 			name: 	  stationData[i].name,
 			icon: 	 'stationIcon.png'
 		});
+		marker[i].addListener('click',function(){
+			//console.log("calling marker "+this.name);
+			infoWindow.content = '<h3>hello</h3>';
+			infoWindow.open(map,this);
+			windowOpenOnStation = this.name;
+			infoWindow.setContent(stationData[stationNameToIndex[this.name]].content);
+			getIncomingTrains();
+		});
 		marker[i].setMap(map);
-	}	
-    debug("end","initStationMarkers"); //////////////////////////////// ----- !
+	}
+    //debug("end","initStationMarkers"); //////////////////////////////// ----- !
 }
 
 function updateStationMarkers(){
@@ -90,8 +102,26 @@ function updateStationMarkers(){
 	}
 }
 
-function addRedlinePath(){
-	debug("start","addRedlinePath"); //////////////////////////////// ----- !
+function initInfoWindow(){
+	infoWindow = new google.maps.InfoWindow({
+		content: ""
+	});
+}
+
+function updateInfoWindow(thisMarker,isUser){
+	if(isUser){
+		infoWindow.setContent("<h1>Loading... </h1>")
+		infoWindow.open(map,userMarker);
+		infoWindow.setContent("<h2>loaded!</h2>");
+	}else{
+		getIncomingTrains();
+		infoWindow.setContent("<h1>Loading... </h1>");
+		infoWindow.open(map,thisMarker);
+	}
+}
+
+function initRedlinePath(){
+	//debug("start","initRedlinePath"); //////////////////////////////// ----- !
 	var alewifeToJFK   = [];
 	var jfkToAshmont   = [];
 	var jfkToBraintree = [];
@@ -120,36 +150,44 @@ function addRedlinePath(){
 	path1.setMap(map);
 	path2.setMap(map);
 	path3.setMap(map);
-	debug("end","addRedlinePath"); //////////////////////////////// ----- !
+	//debug("end","addRedlinePath"); //////////////////////////////// ----- !
 }
 
 function getUserLocation(){
-	debug("start","getUserLocation"); //////////////////////////////// ----- !
+	//debug("start","getUserLocation"); //////////////////////////////// ----- !
 	if(navigator.geolocation){
 		navigator.geolocation.getCurrentPosition(function(position){
 			userLocation.lat = position.coords.latitude;
 			userLocation.lng = position.coords.longitude;
-			userMarker = new google.maps.Marker({
-				position: userLocation,
-				name: 	  "you",
-				icon: 	 'userIcon.png'
-			});
-			userMarker.setMap(map);
-			timeUpdate();
+			//conLog( "lat: " +userLocation.lat+" lng: "+userLocation.lng);
+			//debug("end","getUserLocation"); //////////////////////////////// ----- !
+			updateUserMarker();
+			return;
 		});
 	}else {
 		alert("geolocation not supported by your browser.");
 	}
-	conLog( "lat: " +userLocation.lat+" lng: "+userLocation.lng);
-	debug("end","getUserLocation"); //////////////////////////////// ----- !
+
+	//debug("end","getUserLocation"); //////////////////////////////// ----- !
 }
 
-function timeUpdate(){
+function initUserMarker(){
+	userMarker = new google.maps.Marker({
+		position: userLocation,
+		name: 	  "you",
+		Icon: 	  'userIcon.png'
+	});
+	userMarker.setMap(map);
+	userMarker.addListener('click',updateInfoWindow(userMarker,true))
+}
+
+function updateUserMarker(){
+	userMarker.setPosition(userLocation);
 	updateClosestStation();
 	showClosestStation();
 	updateStationMarkers();
+//	getIncomingTrains();
 }
-
 
 function updateClosestStation(){
 	debug("start","updateClosestStation"); //////////////////////////////// ----- !
@@ -163,7 +201,7 @@ function updateClosestStation(){
 			closestStation = i;
 		}
 	}
-	debug("start","updateClosestStation"); //////////////////////////////// ----- !
+	debug("end","updateClosestStation"); //////////////////////////////// ----- !//
 }
 
 // in miles
@@ -172,96 +210,149 @@ function calcDist(p1,p2){
 	var LatLng1 = new google.maps.LatLng(p1.lat,p1.lng); // needed to make computeDistance work
 	var LatLng2 = new google.maps.LatLng(p2.lat,p2.lng);
 	//debug("end","calcDist"); //////////////////////////////// ----- !
-	return (google.maps.geometry.spherical.computeDistanceBetween(LatLng1, LatLng2) / 1000)*0.621371;
+	return (google.maps.geometry.spherical.computeDistanceBetween(LatLng1, LatLng2) / 1000)*0.621371;//
 }
-
 
 function showClosestStation(){
 	debug("start","showClosestStation"); //////////////////////////////// ----- !
 	userLineProperties.path = [ stationData[closestStation].loc , userLocation ];
 	line2User = new google.maps.Polyline(userLineProperties);
 	line2User.setMap(map);
-	debug("end","showClosestStation"); //////////////////////////////// ----- !
-}
-
-function train(arrivalTime,destination){
-	var newTrain = {
-		'time': arrivalTime,
-		'dest': destination;
-	};
-	return newTrain;
+	debug("end","showClosestStation"); //////////////////////////////// ----- !//
 }
 
 function getIncomingTrains(){
+	debug("start","getIncomingTrains"); //////////////////////////////// ----- !
 	// piazza post "XML request" used as reference
 	var raw;
 	var data;
-	request = new XMLHttpRequest();
+	var request = new XMLHttpRequest();
 	request.open("get","https://rocky-taiga-26352.herokuapp.com/redline.json", true);
 	request.onreadystatechange = function()
 	{
+		// 4 TEESTINGGGGGGG
+		//console.log("ready state is " + request.readyState);
+		// YEAAAAUHHHHH
+
 		if(request.readyState == 4){
 			if ( request.status == 200 ) {
-				raw = request.responseTest;
+				raw = request.responseText;
 				data = JSON.parse(raw);
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+				//console.log(raw);
+				updateStationData(data);
+				debug("end","getIncomingTrains successful"); //////////////////////////////// ----- !
+				return;
+
 			}else{
+				debug("end","getIncomingTrains UNSUCCESSFUL. TRYING AGAIN"); //////////////////////////////// ----- !
 				getIncomingTrains();
 			}
 		}
 	}
+	request.send();
+	debug("end","getIncomingTrains"); //////////////////////////////// ----- !//
 }
 
-
-
-
-
-function(){
+function updateStationData(data){
+	//debug("start","updateStationData"); //////////////////////////////// ----- !
+	var stop = "";
+	var time = 1;
+	var destination = "";
+	var next_train_index = 0;
+	clearTrainData();
 	for(var i =  0; i < data.TripList.Trips.length ; i++ ){
-		for (var k = 0 ; k < data.TripList.Trips.length ; k++) {
-			
+		var trip = data.TripList.Trips[i];
+		destination =  trip.Destination;
+		for (var k = 0 ; k < data.TripList.Trips[i].Predictions.length ; k++){
+			stop = trip.Predictions[k].Stop;
+			time = trip.Predictions[k].Seconds;
+			next_train_index = stationData[stationNameToIndex[trip.Predictions[k].Stop]].trains.length;
+			stationData[stationNameToIndex[stop]].trains[next_train_index] = addTrain(time,destination);
 		}
 	}
-}
-
-
-
-
-
-
-
-function generateInfoWindowContent(incomingTrainTimes,stationNumber){
-	var contentStr = '<div id="content">' +
-	'<div id="siteNotice">'+
-	'</div>' +
-	'<h1 id="stationName">' + stationData[stationNumber].name + '</h1>';
-	for(var i = 0; i<incomingTrainTimes.length;i++){
-		contentStr
+	for(var i=0;i<stationData.length;i++){
+		var content = generateInfoWindowContent(i)
+		stationData[i].content = content;
 	}
-	contentStr = contentStr + '</div>';
+	//debug("end","updateStationData"); //////////////////////////////// ----- !
 }
 
-function orderTrainTimes(){
+function addTrain(arrivalTime,destination){
+	//debug("start","addTrain"); //////////////////////////////// ----- !
+	var newTrain = {
+		'time': arrivalTime,
+		'dest': destination
+	};
+	return newTrain;
+	//debug("end","addTrain"); //////////////////////////////// ----- !//
+}
+
+// clears data from the trains
+function clearTrainData(){
+	for(var i = 0 ; i < stationData.length ; i++){
+		stationData[i].trains = [];
+	}
+}
+
+function generateInfoWindowContent(statNum){
+	debug("start","generateInfoWindowContent"); //////////////////////////////// ----- !
+	var station = stationData[statNum];
+	var possDestinations = ["Ashmont","Braintree","Alewife"];
+	var contentStr = '<div id="content">' +
+	'<h1 id="stationName">' + station.name + '</h1>';
+	for(var k = 0 ; k<possDestinations.length; k++){
+		contentStr += '<h2 class = "destinationName">' +
+		possDestinations[k] + '</h2>';
+		var atLeastOneTrainHeadingToDestination = false;
+		for( var i = 0; i < station.trains.length ; i++ ){
+			if( station.trains[i].dest == possDestinations[k] ){
+				atLeastOneTrainHeadingToDestination = true;
+				contentStr += "<p>   ";
+				contentStr += s2mins(station.trains[i].time);
+				contentStr += "</p>";
+			}
+		}
+		if(!atLeastOneTrainHeadingToDestination){
+			contentStr += '<p>  -no trains-  </p>';
+		}
+	}
+	contentStr += '</div>';
+	console.log(contentStr);
+	return contentStr;
+	debug("end","generateInfoWindowContent"); //////////////////////////////// ----- !////
+}
+
+// should be called just before train data is displayed.
+function orderTrainTimes(num){
+	debug("start","orderTrainTimes"); //////////////////////////////// ----- !
 	var temp;
-	for(var i=0; i<stationData.length;i++){
-		for(var t=1; t<stationData[i].trains.length;t++){
-			if(stationData[i].trains[t].time<stationData[i].trains[t-1]){
-				temp = stationData[i].trains[t-1];
-				stationData[i].trains[t-1] = stationData[i].trains[t];
-				stationData[i].trains[t] = temp;
+	var unordered = true;
+	var station = stationData[num];
+	while(unordered){
+		unordered = false;
+		for(var t=1; t<station.trains.length;t++){
+			if(station.trains[t].time<station.trains[t-1].time){
+				unordered = true;
+				temp = station.trains[t-1];
+				station.trains[t-1] = station.trains[t];
+				station.trains[t] = temp;
 			}
 		}
 	}
+	debug("end","orderTrainTimes"); //////////////////////////////// ----- !//
 }
 
-/*
+
 function s2mins(seconds)
 {
 	debug("start","secondsMinutes"); //////////////////////////////// ----- !
-	return "" + seconds/60 + " m " + seconds%60 " s";
-	debug("end","secondsMinutes"); //////////////////////////////// ----- !
+	var min = seconds/60;
+	var sec = seconds%60;
+	var timey = "" + min + " m " + sec +" s";
+	return timey;
+	debug("end","secondsMinutes"); //////////////////////////////// ----- !//
 }
-
+/*
 function findAndShowClosestStation(){
 
 }
