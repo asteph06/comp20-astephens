@@ -32,13 +32,14 @@ for (var i = 0; i < stationData.length; i++) {
 	stationData[i].trains = [];
 	stationData[i].content = "";
 }
-windowOpenOnStation = "Alewife";
+windowOpenOnStation = true;
+windowOpenOnStationNum = "Alewife";
 
 userLocation = {lat: 0 , lng: 0};
 closestStation = 30;
 minDistance = 0;
 marker = [];
-
+minDistance = 0;
 redLineProperties = {
 	path: [],
 	geodesic: true,
@@ -77,16 +78,15 @@ function initStationMarkers(){
 			name: 	  stationData[i].name,
 			icon: 	 'stationIcon.png'
 		});
-		console.log("adding listener for marker: "+stationData[i].name);
 		marker[i].addListener('click',function(){
 			infoWindow.content = '<h3>loading</h3>';
 			infoWindow.open(map,this);
-			windowOpenOnStation = this.name;
+			windowOpenOnStation = true;
+			windowOpenOnStationNum = this.name;
 			infoWindow.setContent(stationData[stationNameToIndex[this.name]].content);
 			updateUserMarker()
 			getIncomingTrains();
 		});
-		console.log("finished adding listener for marker: "+stationData[i].name);
 		marker[i].setMap(map);
 	}
 }
@@ -157,10 +157,11 @@ function initUserMarker(){
 		name: 	  "you",
 		Icon: 	  'userIcon.png'
 	});
-	marker[i].addListener('click',function(){
+	userMarker.addListener('click',function(){
 		infoWindow.content = 'loading...';
 		infoWindow.open(map,this);
-		infoWindow.setContent(stationData[stationNameToIndex[this.name]].content);
+		windowOpenOnStation = false;
+		infoWindow.setContent(generateUserMarkerContent());
 		updateUserMarker()
 		getIncomingTrains();
 	});
@@ -168,7 +169,14 @@ function initUserMarker(){
 }
 
 function generateUserMarkerContent(){
-//	stationData[closestStation].name
+	var station = stationData[closestStation];
+	var contentStr = '<div id="content" style="text-align: center; line-height: 5px;" >' +
+	'<h1 id="Name">you</h1>';
+	contentStr += '<h4 class = "destinationName">The closest station is:</h4>';
+	contentStr += '<p>' + station.name + ' station </p>';
+	contentStr += '<p> it is ' + minDistance.toFixed(3) + ' miles away</p>';
+	contentStr += '</div>';
+	return contentStr;
 }
 
 function updateUserMarker(){
@@ -181,7 +189,7 @@ function updateUserMarker(){
 function updateClosestStation(){
 	var distance = 0;
 	closestStation = 0;
-	minDistance = distance = calcDist(stationData[0].loc,userLocation);
+	minDistance = calcDist(stationData[0].loc,userLocation);
 	for(var i = 1; i<stationData.length;i++){
 		distance = calcDist(stationData[i].loc,userLocation);
 		if(distance <= minDistance){
@@ -192,7 +200,6 @@ function updateClosestStation(){
 }
 
 function showClosestStation(){
-	debug("start","showClosestStation"); //////////////////////////////// ----- !
 	userLineProperties.path = [ stationData[closestStation].loc , userLocation ];
 	line2User = new google.maps.Polyline(userLineProperties);
 	line2User.setMap(map);
@@ -219,7 +226,9 @@ function getIncomingTrains(){
 				raw = request.responseText;
 				data = JSON.parse(raw);
 				updateStationData(data);
-				infoWindow.setContent(stationData[stationNameToIndex[windowOpenOnStation]].content);
+				if (windowOpenOnStation){
+					infoWindow.setContent(stationData[stationNameToIndex[windowOpenOnStationNum]].content);
+				}
 				return;
 			}else{
 				getIncomingTrains();
@@ -267,6 +276,7 @@ function clearTrainData(){
 
 function generateInfoWindowContent(statNum){
 	var station = stationData[statNum];
+	orderTrainTimes(statNum);
 	var possDestinations = ["Ashmont","Braintree","Alewife"];
 	var contentStr = '<div id="content" style="text-align: center; line-height: 5px;" >' +
 	'<h3 id="stationName">' + station.name + '</h3>';
@@ -287,7 +297,6 @@ function generateInfoWindowContent(statNum){
 		}
 	}
 	contentStr += '</div>';
-	console.log(contentStr);
 	return contentStr;
 }
 

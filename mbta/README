@@ -1,2 +1,23 @@
-w
- --------------- README for assignment 2
+--------------- README for assignment 2
+
+Student: Ashton Stephens
+
+Correctly implemented:
+	markers to mbta stations
+	polyline connecting station locations
+	finding closest station to user
+	adding poly line connector to user
+	displaying and getting information about stations
+	displaying distance between user and closest train stationn
+	all infowindow functionality
+
+Worked With:
+	Nobody
+
+Hours worked on:
+	approximately 10
+	I have no life and I had a lot of trouble
+	trying to learn javascript :<(
+
+var Ashton = {'tiredness':100,'loveOfJavaScript':0}
+
