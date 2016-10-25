@@ -1,4 +1,5 @@
 <!--
+// -------------------------- Global variable Declarations--------
 stationData = [
 	 {"name":"Alewife","loc":{"lat": 42.395428  ,"lng":-71.142483}},
 	 {"name":"Davis","loc":{"lat": 42.39674   ,"lng":-71.121815}},
@@ -53,7 +54,7 @@ userLineProperties = {
  	strokeWeight: 2
 };
 
-
+// -------------------------- functions --------------------------------
 function initMap(){
 	var myOptions = {
 		zoom: 12,
@@ -76,6 +77,7 @@ function initStationMarkers(){
 			name: 	  stationData[i].name,
 			icon: 	 'stationIcon.png'
 		});
+		console.log("adding listener for marker: "+stationData[i].name);
 		marker[i].addListener('click',function(){
 			infoWindow.content = '<h3>loading</h3>';
 			infoWindow.open(map,this);
@@ -84,6 +86,7 @@ function initStationMarkers(){
 			updateUserMarker()
 			getIncomingTrains();
 		});
+		console.log("finished adding listener for marker: "+stationData[i].name);
 		marker[i].setMap(map);
 	}
 }
@@ -164,6 +167,10 @@ function initUserMarker(){
 	userMarker.setMap(map);
 }
 
+function generateUserMarkerContent(){
+//	stationData[closestStation].name
+}
+
 function updateUserMarker(){
 	userMarker.setPosition(userLocation);
 	updateClosestStation();
@@ -172,7 +179,6 @@ function updateUserMarker(){
 }
 
 function updateClosestStation(){
-	debug("start","updateClosestStation"); //////////////////////////////// ----- !
 	var distance = 0;
 	closestStation = 0;
 	minDistance = distance = calcDist(stationData[0].loc,userLocation);
@@ -183,16 +189,6 @@ function updateClosestStation(){
 			closestStation = i;
 		}
 	}
-	debug("end","updateClosestStation"); //////////////////////////////// ----- !//
-}
-
-// in miles
-function calcDist(p1,p2){
-	//debug("start","calcDist"); //////////////////////////////// ----- !
-	var LatLng1 = new google.maps.LatLng(p1.lat,p1.lng); // needed to make computeDistance work
-	var LatLng2 = new google.maps.LatLng(p2.lat,p2.lng);
-	//debug("end","calcDist"); //////////////////////////////// ----- !
-	return (google.maps.geometry.spherical.computeDistanceBetween(LatLng1, LatLng2) / 1000)*0.621371;//
 }
 
 function showClosestStation(){
@@ -200,11 +196,17 @@ function showClosestStation(){
 	userLineProperties.path = [ stationData[closestStation].loc , userLocation ];
 	line2User = new google.maps.Polyline(userLineProperties);
 	line2User.setMap(map);
-	debug("end","showClosestStation"); //////////////////////////////// ----- !//
 }
 
+
+function calcDist(p1,p2){ // in miles
+	var LatLng1 = new google.maps.LatLng(p1.lat,p1.lng);
+	var LatLng2 = new google.maps.LatLng(p2.lat,p2.lng);
+	return (google.maps.geometry.spherical.computeDistanceBetween(LatLng1, LatLng2) / 1000)*0.621371;//
+}
+
+
 function getIncomingTrains(){
-	debug("start","getIncomingTrains"); //////////////////////////////// ----- !
 	// piazza post "XML request" used as reference
 	var raw;
 	var data;
@@ -212,30 +214,22 @@ function getIncomingTrains(){
 	request.open("get","https://rocky-taiga-26352.herokuapp.com/redline.json", true);
 	request.onreadystatechange = function()
 	{
-		// 4 TEESTINGGGGGGG
-		//console.log("ready state is " + request.readyState);
-		// YEAAAAUHHHHH
-
 		if(request.readyState == 4){
 			if ( request.status == 200 ) {
 				raw = request.responseText;
 				data = JSON.parse(raw);
 				updateStationData(data);
-				debug("end","getIncomingTrains successful"); //////////////////////////////// ----- !
 				infoWindow.setContent(stationData[stationNameToIndex[windowOpenOnStation]].content);
 				return;
 			}else{
-				debug("end","getIncomingTrains UNSUCCESSFUL. TRYING AGAIN"); //////////////////////////////// ----- !
 				getIncomingTrains();
 			}
 		}
 	}
 	request.send();
-	debug("end","getIncomingTrains"); //////////////////////////////// ----- !//
 }
 
 function updateStationData(data){
-	//debug("start","updateStationData"); //////////////////////////////// ----- !
 	var stop = "";
 	var time = 1;
 	var destination = "";
@@ -255,20 +249,16 @@ function updateStationData(data){
 		var content = generateInfoWindowContent(i)
 		stationData[i].content = content;
 	}
-	//debug("end","updateStationData"); //////////////////////////////// ----- !
 }
 
 function addTrain(arrivalTime,destination){
-	//debug("start","addTrain"); //////////////////////////////// ----- !
 	var newTrain = {
 		'time': arrivalTime,
 		'dest': destination
 	};
 	return newTrain;
-	//debug("end","addTrain"); //////////////////////////////// ----- !//
 }
 
-// clears data from the trains
 function clearTrainData(){
 	for(var i = 0 ; i < stationData.length ; i++){
 		stationData[i].trains = [];
@@ -276,7 +266,6 @@ function clearTrainData(){
 }
 
 function generateInfoWindowContent(statNum){
-	debug("start","generateInfoWindowContent"); //////////////////////////////// ----- !
 	var station = stationData[statNum];
 	var possDestinations = ["Ashmont","Braintree","Alewife"];
 	var contentStr = '<div id="content" style="text-align: center; line-height: 5px;" >' +
@@ -300,12 +289,9 @@ function generateInfoWindowContent(statNum){
 	contentStr += '</div>';
 	console.log(contentStr);
 	return contentStr;
-	debug("end","generateInfoWindowContent"); //////////////////////////////// ----- !////
 }
 
-// should be called just before train data is displayed.
 function orderTrainTimes(num){
-	debug("start","orderTrainTimes"); //////////////////////////////// ----- !
 	var temp;
 	var unordered = true;
 	var station = stationData[num];
@@ -320,29 +306,13 @@ function orderTrainTimes(num){
 			}
 		}
 	}
-	debug("end","orderTrainTimes"); //////////////////////////////// ----- !//
 }
 
 
 function s2mins(seconds)
 {
-	debug("start","secondsMinutes"); //////////////////////////////// ----- !
 	var min = Math.floor(seconds/60);
 	var sec = seconds%60;
-	var timey = "" + min + " m " + sec +" s";
-	return timey;
-	debug("end","secondsMinutes"); //////////////////////////////// ----- !//
+	return "" + min + " m " + sec +" s";
 }
-/*
-function findAndShowClosestStation(){
-
-}
-
-function centerMapOnUser(){
-
-}
-
-function displayTrainInfo(stationNumber){\
-
-}*/
 -->
