@@ -7,7 +7,21 @@
 	<title>Captain's Log</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script>
-	
+	localStorage.setItem("capLog","");
+	$(document).ready(function(){
+		$('#msg').keypress(function(e){
+			if(e.which == 13 ){
+				var capLog = '<p>'+$(this).val()+'</p>'
+					+ localStorage.getItem("capLog");
+				console.log("caplog : "+capLog);
+				$("#log").html(capLog);
+				localStorage.setItem("capLog",capLog);
+				$(this).val('');
+			}
+		});
+	});
+
+
 	</script>
 </head>
 
