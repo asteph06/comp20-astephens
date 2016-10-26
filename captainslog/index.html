@@ -7,13 +7,18 @@
 	<title>Captain's Log</title>
 	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.1/jquery.min.js"></script>
 	<script>
-	localStorage.setItem("capLog","");
+
 	$(document).ready(function(){
+		if(localStorage.getItem("capLog") != null){
+			$("#log").html(localStorage.getItem("capLog"));
+		}else{
+			localStorage.setItem("capLog","");
+		}
 		$('#msg').keypress(function(e){
 			if(e.which == 13 ){
-				var capLog = '<p>'+$(this).val()+'</p>'
-					+ localStorage.getItem("capLog");
-				console.log("caplog : "+capLog);
+				var dateStr = dateString();
+				var capLog = '<p>'+dateStr+' - '+$(this).val()
+					+ '</p>' + localStorage.getItem("capLog");
 				$("#log").html(capLog);
 				localStorage.setItem("capLog",capLog);
 				$(this).val('');
@@ -21,7 +26,27 @@
 		});
 	});
 
-
+	function dateString(){
+		var date = new Date();
+		var dateStr = ''+date.getDate()+'/'
+				+ date.getMonth()+'/'
+				+ date.getFullYear()+' ';
+		var hours = date.getHours();
+		if(hours < 12){
+			if(hours == 0){
+				hours = 12;
+			}
+			var ampm = 'AM';
+		}else{
+			if(hours != 12){
+				hours -=12;
+			}
+			var ampm = 'PM';
+		}
+		dateStr += hours + ':' + date.getMinutes() +
+			':' + date.getSeconds() + " " + ampm;
+		return dateStr;
+	}
 	</script>
 </head>
 
