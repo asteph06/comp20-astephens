@@ -218,7 +218,7 @@ function getIncomingTrains(){
 	var raw;
 	var data;
 	var request = new XMLHttpRequest();
-	request.open("get","https://rocky-taiga-26352.herokuapp.com/redline.json", true);
+	request.open("get","http://polar-citadel-76205.herokuapp.com/", true);
 	request.onreadystatechange = function()
 	{
 		if(request.readyState == 4){
@@ -247,7 +247,7 @@ function updateStationData(data){
 	for(var i =  0; i < data.TripList.Trips.length ; i++ ){
 		var trip = data.TripList.Trips[i];
 		destination =  trip.Destination;
-		for (var k = 0 ; k < data.TripList.Trips[i].Predictions.length ; k++){
+		for ( var k = 0 ; k < data.TripList.Trips[i].Predictions.length ; k++ ){
 			stop = trip.Predictions[k].Stop;
 			time = trip.Predictions[k].Seconds;
 			next_train_index = stationData[stationNameToIndex[trip.Predictions[k].Stop]].trains.length;
