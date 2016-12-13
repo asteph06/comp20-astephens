@@ -2,51 +2,106 @@
  <html>
  <head>
  	<title>2048 Security Analysis</title>
- 	<style type="text/css" src="style.css"></style>
  </head>
- <body>
- <h1>
- 	2048 Security Analysis - Assignment 3
- </h1>
- <div class="Introduction">
-	 <h3>
-	 	Introduction
-	 </h3>
-	 <p>
-	 	abosf
-	 </p>
- </div>
- <div class="Methodology">
-	 <h3>
-	 	Methodology
-	 </h3>
-	 <p>
-	 	abjsfk
-	 </p>
- </div>
- <div class="Abstract">
-	 <h3>
-	 	Abstract Findings
-	 </h3>
-	 <p>
-	 	afuiub
-	 </p>
- </div> 
- <div class="Issues">
-	 <h3>
-	 	Issues Found
-	 </h3>
-	 <p>
-	 	afs hb
-	 </p>
- </div>
- <div class="Conclusion">
-	 <h3>
-	 	Conclusion
-	 </h3>
-	 <p>
-	 	hafuhmf
-	 </p>
- </div>
+ <body style="padding-left: 15%; padding-right:15%;">
+	 <h1>
+	 	2048 Security Analysis - Assignment 3
+	 </h1>
+	 <div style="padding-left: 10px;">
+		 <div class="Introduction">
+			 <h3>
+			 	Introduction
+			 </h3>
+			 <p style="padding-left: 10px;">
+			 	The website being tested is a small web application designed to
+			 	run the game 2048, and store the scores on a server which uses 
+			 	a database run through mongodb. The goal here is break the web
+			 	server as much as possible in order to discover any security 
+			 	flaws the system may have.
+			 </p>
+		 </div>
+		 <div class="Methodology">
+			 <h3>
+			 	Methodology
+			 </h3>
+			 <p style="padding-left: 10px;">
+			 	At first the server was sent scores by impossible names that 
+			 	would not usually be sent through the use of curl. Upon 
+			 	discovering that html code could be inserted into the scores
+			 	page, this fact was taken advantage of by inserting malicious
+			 	scripts into the page that sent additional information to the 
+			 	server repeatedly.
+			 </p>
+		 </div>
+		 <div class="Abstract">
+			 <h3>
+			 	Abstract Findings
+			 </h3>
+			 <p style="padding-left: 10px;">
+			 	The biggest vulnerability in this application exists in the 
+			 	ability to post usernames to be displayed on the score board 
+			 	that may contain html scripts with malicious content. 
+			 </p>
+		 </div> 
+		 <div class="Issues">
+			 <h3>
+			 	Issues Found
+			 </h3>
+			 <p style="padding-left: 10px;">
+			 	The largest issue is in the lack of checking for script elements
+			 	(or any element) in the acceptance and printing of the username or
+			 	score to the score screen. This allows a potential hacker to bypass
+			 	the same origin resource policy and to use the server to distribute
+			 	information about the server as well as other users of the website.
+
+			 	By inserting a javascript element that can send information to 
+			 	a hacker owned server, this website can easily host macicious content
+			 	that can damage user's privacy by sending their location somewhere
+			 	unwanted.
+
+			 	What's more, the server already has access to a module that 
+			 	has the ability to check for patterns in JSON strings - jsonschema.
+			 	This code should be written here:
+			 	<p></p>
+			 	<img id="bioImage" src="error_code_validation.png" alt="overly passable validator" height="100%" width="100%">
+			 	<p></p>
+			 	As well, the security on ouput of the html is lacking. Should someone
+			 	want to use a username that could be intertpreted as a script, the
+			 	output html should be inserted such that all "<" and ">" characters
+			 	no longer insert elements:
+			 	<p></p>
+				<img id="bioImage" src="error_code.png" alt="non-checking html output" height="100%" width="100%">
+
+			 </p>
+			 	<p></p>
+			 	 Not only does this leave open the sending of private user data
+			 	 to malicious servers, but it enables the shutdown of the mongoDB
+			 	 servers with the use of repeated posting scripts written in the 
+			 	 inserted scripts. After posting thousands of json files to the
+			 	 server, I was able to overwhelm it with 
+
+		 </div>
+		 <div class="Conclusion">
+			 <h3>
+			 	Conclusion
+			 </h3>
+			 <p style="padding-left: 10px;">
+			 	Recommendations:
+			 	<p style="padding-left: 20px;">
+			 		use jsonschema node module to check for html scripts
+			 	</p>
+			 	<p style="padding-left: 20px;">
+			 		check usernames before outputting them to html
+			 	</p>
+			 	<p style="padding-left: 20px;">
+			 		use jsonschema node module to check for html scripts
+			 	</p>
+			 	<p style="padding-left: 20px;">
+			 		use jsonschema node module to check for html scripts
+			 	</p>
+
+			 </p>
+		 </div>
+ 	</div>
  </body>
  </html>
