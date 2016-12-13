@@ -78,8 +78,24 @@
 			 	 to malicious servers, but it enables the shutdown of the mongoDB
 			 	 servers with the use of repeated posting scripts written in the 
 			 	 inserted scripts. After posting thousands of json files to the
-			 	 server, I was able to overwhelm it with 
-
+			 	 server, I was able to overwhelm it a small script designed to overwhelm the server. The following result occurs:
+				<p></p>
+				<img id="bioImage" src="overloaded_server.png" alt="overloaded server scores page" height="50%" width="50%">
+			 	<p></p>
+			 	<p><b>issue:</b> can insert non integer values as scores. Found in the
+			 	server post method. Severity: low. Resolved with simple checks</p>
+			 	<p><b>issue:</b> can insert html scripts into the scores page. Found in 
+			 	the server get method for returning the base URL. Severity: high.
+			 	Resolved with greater checks on the get request or on the post
+			 	 request for html elements </p>
+			 	<p>
+			 		
+			 	<p><b>issue:</b> can insert html scripts into the scores page. 
+			 	Found in 
+			 	the server get method for returning the base URL. Severity: high.
+			 	Resolved with greater checks on the get request or on the post
+			 	 request for html elements </p>
+			 	<p>
 		 </div>
 		 <div class="Conclusion">
 			 <h3>
