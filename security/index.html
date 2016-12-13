@@ -5,7 +5,7 @@
  </head>
  <body style="padding-left: 15%; padding-right:15%;">
 	 <h1>
-	 	2048 Security Analysis - Assignment 3
+	 	2048 Security Analysis - Assignment 4
 	 </h1>
 	 <div style="padding-left: 10px;">
 		 <div class="Introduction">
@@ -31,6 +31,11 @@
 			 	page, this fact was taken advantage of by inserting malicious
 			 	scripts into the page that sent additional information to the 
 			 	server repeatedly.
+
+			 	Additionally, the scores.json page was requested for various 
+			 	different usernames in an attempt to get more data than should
+			 	be available. by using the query string " /?username[$qt]= " 
+			 	I was able to recieve all user's information.
 			 </p>
 		 </div>
 		 <div class="Abstract">
@@ -63,36 +68,48 @@
 			 	has the ability to check for patterns in JSON strings - jsonschema.
 			 	This code should be written here:
 			 	<p></p>
-			 	<img id="bioImage" src="error_code_validation.png" alt="overly passable validator" height="100%" width="100%">
+			 	<img src="error_code_validation.png" alt="overly passable validator" height="100%" width="100%">
 			 	<p></p>
 			 	As well, the security on ouput of the html is lacking. Should someone
 			 	want to use a username that could be intertpreted as a script, the
 			 	output html should be inserted such that all "<" and ">" characters
 			 	no longer insert elements:
 			 	<p></p>
-				<img id="bioImage" src="error_code.png" alt="non-checking html output" height="100%" width="100%">
-
+				<img src="error_code.png" alt="non-checking html output" height="100%" width="100%">
 			 </p>
 			 	<p></p>
 			 	 Not only does this leave open the sending of private user data
 			 	 to malicious servers, but it enables the shutdown of the mongoDB
 			 	 servers with the use of repeated posting scripts written in the 
 			 	 inserted scripts. After posting thousands of json files to the
-			 	 server, I was able to overwhelm it a small script designed to overwhelm the server. The following result occurs:
+			 	 server, I was able to overwhelm it a small script designed to sent many
+			 	 small pieces of data to the server. The following result occurs: 
+			 	 (no usernames, scores, or dates are shown).
 				<p></p>
-				<img id="bioImage" src="overloaded_server.png" alt="overloaded server scores page" height="50%" width="50%">
+				<img src="overloaded_server.png" alt="overloaded server scores page" height="50%" width="50%">
 			 	<p></p>
+			 	The last and possibly worst security issue in this website is the
+			 	ability to recieve all information housed in the database with the
+			 	query string /?username[$gt]= . In my case since the server has been
+			 	overloaded with information, the request times out and gives a website
+			 	error. But the fact the error is shown gives an indication of what is 
+			 	going on: the server is trying to access too many scores.
+				<p></p>
+				<img src="too_much_access.png" alt="server displaying error message" height="50%" width="50%">
+				<p></p>
+
 			 	<p><b>issue:</b> can insert non integer values as scores. Found in the
-			 	server post method. Severity: low. Resolved with simple checks</p>
+			 	server post method. <b>Severity:</b> low. Resolved with simple checks</p>
+
 			 	<p><b>issue:</b> can insert html scripts into the scores page. Found in 
-			 	the server get method for returning the base URL. Severity: high.
+			 	the server get method for returning the base URL. <b>Severity:</b> high.
 			 	Resolved with greater checks on the get request or on the post
 			 	 request for html elements </p>
 			 	<p>
 			 		
-			 	<p><b>issue:</b> can recieve additional usernames and scores from
-			 	the server than requested using {$ne:""} as the username query. 
-			 	Found in the get request for scores.json. Severity:high. Resolved
+			 	<p><b>issue:</b> can recieve all usernames and scores from
+			 	the server using the query "/?username[$qt]=". Found 
+			 	in the get request for scores.json.<b>Severity:</b>high. Resolved
 				by checking query content type for string.</p>
 			 	
 		 </div>
@@ -103,10 +120,11 @@
 			 <p style="padding-left: 10px;">
 			 	Recommendations:
 			 	<p style="padding-left: 20px;">
-			 		use jsonschema node module to check for html scripts
+			 		use jsonschema node module to check for html scripts and 
+			 		integer values for the score.
 			 	</p>
 			 	<p style="padding-left: 20px;">
-			 		check usernames before outputting them to html
+			 		check usernames before outputting them to html.
 			 	</p>
 			 	<p style="padding-left: 20px;">
 			 		check for objects in the username query
