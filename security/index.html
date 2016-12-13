@@ -90,12 +90,11 @@
 			 	 request for html elements </p>
 			 	<p>
 			 		
-			 	<p><b>issue:</b> can insert html scripts into the scores page. 
-			 	Found in 
-			 	the server get method for returning the base URL. Severity: high.
-			 	Resolved with greater checks on the get request or on the post
-			 	 request for html elements </p>
-			 	<p>
+			 	<p><b>issue:</b> can recieve additional usernames and scores from
+			 	the server than requested using {$ne:""} as the username query. 
+			 	Found in the get request for scores.json. Severity:high. Resolved
+				by checking query content type for string.</p>
+			 	
 		 </div>
 		 <div class="Conclusion">
 			 <h3>
